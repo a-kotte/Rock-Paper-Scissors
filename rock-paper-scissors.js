@@ -5,6 +5,15 @@ function getComputerChoice() {
   return options[choice];
 }
 
+function getWinCondition(playerSelection, computerSelection) {
+  let winCondition = (
+    (playerSelection === 'rock' && computerSelection === 'scissors') ||
+    (playerSelection === 'scissors' && computerSelection === 'paper') ||
+    (playerSelection === 'paper' && computerSelection === 'rock')
+  )
+  return winCondition; 
+}
+
 function playRound(playerSelection, computerSelection) {
   if (typeof(playerSelection) !== 'string') {
     return "Invalid input";
@@ -17,12 +26,7 @@ function playRound(playerSelection, computerSelection) {
     console.log("It's a tie!");
     return "tie";
   }
-  let winCondition = (
-    (playerSelection === 'rock' && computerSelection === 'scissors') ||
-    (playerSelection === 'scissors' && computerSelection === 'paper') ||
-    (playerSelection === 'paper' && computerSelection === 'rock')
-  )
-  if (winCondition) {
+  if (getWinCondition(playerSelection, computerSelection)) {
     console.log("You win! " + playerSelection + " beats " + computerSelection);
     return "win";
   }
@@ -32,13 +36,15 @@ function playRound(playerSelection, computerSelection) {
   }
 }
 
+// function returns how much to update scores 
+// returns in format [playerScoreUpdate, computerScoreUpdate]
 function updateScore(result) {
-  if (result === "tie") {
-    return [0, 0];
-  } else if (result === "win") {
+  if (result === "win") {
     return [1, 0];
   } else if (result === "loss") {
     return [0, 1];
+  } else {
+    return [0, 0];
   }
 }
 
@@ -49,8 +55,7 @@ function reportWinner(playerScore, computerScore) {
     return "You lose with " + playerScore + " points to " + computerScore + "!";
   } else {
     return "It's a tie! You both got " + playerScore + " points!";
-  }
-  
+  }  
 }
 
 function playGame() {
@@ -64,15 +69,18 @@ function playGame() {
     let computerSelection = getComputerChoice();
     let result = playRound(playerSelection, computerSelection);
     let scoreUpdates = updateScore(result);
+    
     playerScore += scoreUpdates[0];
     computerScore += scoreUpdates[1];
     console.log("your current score is " + playerScore);        
     console.log("Computer's current score is " + computerScore);
+    
     numberOfRounds += 1;
     if(numberOfRounds >= 5) {
       keepGoing = false;
     }
   }
+  
   console.log(reportWinner(playerScore, computerScore));
   return reportWinner(playerScore, computerScore);
 }
