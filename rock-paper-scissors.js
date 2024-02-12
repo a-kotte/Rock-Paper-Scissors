@@ -77,8 +77,4 @@ function playGame() {
   return reportWinner(playerScore, computerScore);
 }
 
-// const playerSelection = prompt("Pick rock, paper, or scissors to play");
-// console.log("player chose " + playerSelection);
-// const computerSelection = getComputerChoice();
-// console.log(playRound(playerSelection, computerSelection));
 playGame();
