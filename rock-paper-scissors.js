@@ -1,5 +1,5 @@
 function getComputerChoice() {
-  let options = ['rock', 'paper', 'scissors'];
+  const options = ['rock', 'paper', 'scissors'];
   let choice = Math.floor(Math.random() * 3);
   console.log("Computer chose " + options[choice]);
   return options[choice];
@@ -59,30 +59,27 @@ function reportWinner(playerScore, computerScore) {
 }
 
 function playGame() {
-  let keepGoing = true;
-  let numberOfRounds = 0;
   let playerScore = 0;
   let computerScore = 0;
 
-  while (keepGoing) {
-    let playerSelection = prompt("Pick rock, paper, or scissors to play");
-    let computerSelection = getComputerChoice();
-    let result = playRound(playerSelection, computerSelection);
-    let scoreUpdates = updateScore(result);
-    
-    playerScore += scoreUpdates[0];
-    computerScore += scoreUpdates[1];
-    console.log("your current score is " + playerScore);        
-    console.log("Computer's current score is " + computerScore);
-    
-    numberOfRounds += 1;
-    if(numberOfRounds >= 5) {
-      keepGoing = false;
-    }
-  }
-  
-  console.log(reportWinner(playerScore, computerScore));
-  return reportWinner(playerScore, computerScore);
 }
 
-playGame();
+const body = document.querySelector('body');
+const rockButton = document.createElement('button');
+rockButton.textContent = 'Rock'
+body.append(rockButton);
+const paperButton = document.createElement('button');
+paperButton.textContent = 'Paper'
+body.append(paperButton);
+const scissorsButton = document.createElement('button');
+scissorsButton.textContent = 'Scissors'
+body.append(scissorsButton);
+
+const buttons = document.querySelectorAll('button');
+buttons.forEach((button) => {    
+  button.addEventListener('click', () => {
+    let result = playRound(button.textContent, getComputerChoice()); 
+    
+    console.log(result);
+  });
+});
