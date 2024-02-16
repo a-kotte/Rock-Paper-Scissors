@@ -1,3 +1,45 @@
+const body = document.querySelector('body');
+
+// Prompt user for input via buttons
+// Generate random computer pick after input is selected
+// See who wins based on selection
+// After computing win, update the score
+// and update game history
+// if a player reaches 5 points, report winner and surface play again button
+
+
+// Play a round each time a button is clicked
+const buttons = document.querySelectorAll('.player-choice');
+buttons.forEach((button) => {    
+  button.addEventListener('click', () => {  
+    let computerSelection = getComputerChoice();
+    let playerSelection = button.textContent;  
+
+    let result = playRound(playerSelection, computerSelection);
+    updateGameHistory(playerSelection, computerSelection, result); 
+    updateScore(result);                        
+  });
+});
+
+function playRound(playerSelection, computerSelection) {
+  if (typeof(playerSelection) !== 'string') {
+    return "Invalid input";
+  }
+
+  playerSelection = playerSelection.toLowerCase();
+  computerSelection = computerSelection.toLowerCase();
+
+  if (playerSelection === computerSelection) {            
+    return 'tied';        
+  }
+  if (getWinCondition(playerSelection, computerSelection)) {    
+    return 'won';    
+  }
+  else {    
+    return 'lost';   
+  }
+}
+
 function getComputerChoice() {
   const options = ['rock', 'paper', 'scissors'];
   let choice = Math.floor(Math.random() * 3);
@@ -14,72 +56,46 @@ function getWinCondition(playerSelection, computerSelection) {
   return winCondition; 
 }
 
-function playRound(playerSelection, computerSelection) {
-  if (typeof(playerSelection) !== 'string') {
-    return "Invalid input";
+function updateScore(result) {
+  let playerScore = body.querySelector('.player-score');
+  let computerScore = body.querySelector('.computer-score');
+  if (result === "won") {       
+    playerScore.textContent = Number(playerScore.textContent)+1;     
+  } else if (result === "lost") {    
+    computerScore.textContent = Number(computerScore.textContent)+1;    
   }
-
-  playerSelection = playerSelection.toLowerCase();
-  computerSelection = computerSelection.toLowerCase();
-
-  if (playerSelection === computerSelection) {
-    console.log("It's a tie!");
-    return "tie";
-  }
-  if (getWinCondition(playerSelection, computerSelection)) {
-    console.log("You win! " + playerSelection + " beats " + computerSelection);
-    return "win";
-  }
-  else {
-    console.log("You lose! " + computerSelection + " beats " + playerSelection);
-    return "loss";
-  }
+  reportWinner(playerScore.textContent, computerScore.textContent);
 }
 
-// function returns how much to update scores 
-// returns in format [playerScoreUpdate, computerScoreUpdate]
-function updateScore(result) {
-  if (result === "win") {
-    return [1, 0];
-  } else if (result === "loss") {
-    return [0, 1];
-  } else {
-    return [0, 0];
-  }
+function updateGameHistory(playerSelection, computerSelection, result) {
+  const gameHistory = document.querySelector('.game-history');
+  let priorGame = document.createElement('li');
+  priorGame.textContent = "You chose " + playerSelection.toLowerCase() + 
+                          " and computer chose " + computerSelection.toLowerCase() + "." +
+                          " You " + result + '!';
+  gameHistory.appendChild(priorGame);  
+  return;
 }
 
 function reportWinner(playerScore, computerScore) {
-  if (playerScore > computerScore) {
-    return "You win with " + playerScore + " points to " + computerScore + "!";
-  } else if (playerScore < computerScore) {
-    return "You lose with " + playerScore + " points to " + computerScore + "!";
-  } else {
-    return "It's a tie! You both got " + playerScore + " points!";
-  }  
+  if (Number(playerScore) >= 5) {    
+    alert("You won with " + playerScore + " points to " + computerScore + "!");
+    resetGame();
+  } else if (computerScore >= 5) {   
+    alert("You lost with " + playerScore + " points to " + computerScore + "!");
+    resetGame();
+  }
+  return;
 }
 
-function playGame() {
-  let playerScore = 0;
-  let computerScore = 0;
+function resetGame() {
+  let playerScore = body.querySelector('.player-score');
+  let computerScore = body.querySelector('.computer-score');
+  playerScore.textContent = 0;
+  computerScore.textContent = 0;
 
-}
-
-const body = document.querySelector('body');
-const rockButton = document.createElement('button');
-rockButton.textContent = 'Rock'
-body.append(rockButton);
-const paperButton = document.createElement('button');
-paperButton.textContent = 'Paper'
-body.append(paperButton);
-const scissorsButton = document.createElement('button');
-scissorsButton.textContent = 'Scissors'
-body.append(scissorsButton);
-
-const buttons = document.querySelectorAll('button');
-buttons.forEach((button) => {    
-  button.addEventListener('click', () => {
-    let result = playRound(button.textContent, getComputerChoice()); 
-    
-    console.log(result);
+  let priorGames = document.querySelectorAll('li');
+  priorGames.forEach((priorGame) => {
+    priorGame.parentElement.removeChild(priorGame);
   });
-});
+}
